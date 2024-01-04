@@ -27,41 +27,6 @@ model User {
   connections Connection[]
 }
 
-model Note {
-  id      String @id @default(cuid())
-  title   String
-  content String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  ownerId String
-
-  images NoteImage[]
-
-  // non-unique foreign key
-  @@index([ownerId])
-  // This helps our order by in the user search a LOT
-  @@index([ownerId, updatedAt])
-}
-
-model NoteImage {
-  id          String  @id @default(cuid())
-  altText     String?
-  contentType String
-  blob        Bytes
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  note   Note   @relation(fields: [noteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  noteId String
-
-  // non-unique foreign key
-  @@index([noteId])
-}
-
 model UserImage {
   id          String  @id @default(cuid())
   altText     String?
@@ -166,4 +131,62 @@ model Connection {
   userId String
 
   @@unique([providerName, providerId])
+}
+
+model Note {
+  id      String @id @default(cuid())
+  title   String
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId String
+
+  images NoteImage[]
+
+  // non-unique foreign key
+  @@index([ownerId])
+  // This helps our order by in the user search a LOT
+  @@index([ownerId, updatedAt])
+}
+
+model NoteImage {
+  id          String  @id @default(cuid())
+  altText     String?
+  contentType String
+  blob        Bytes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  note   Note   @relation(fields: [noteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  noteId String
+
+  // non-unique foreign key
+  @@index([noteId])
+}
+
+model TimestampSet {
+  id        String @id @default(cuid())
+  title     String
+  defaultTz String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  timestamps Timestamp[]
+}
+
+model Timestamp {
+  id               String @id @default(cuid())
+  contentJson      String
+  datetimeNaiveIso String
+  tz               String
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  TimestampSet   TimestampSet @relation(fields: [timestampSetId], references: [id])
+  timestampSetId String
 }
